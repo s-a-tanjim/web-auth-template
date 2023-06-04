@@ -1,12 +1,7 @@
 <template>
   <div>
-    <Navbar />
-    <nuxt />
+    <navbar />
+    <slot />
+    <!-- <AppFooter /> -->
   </div>
 </template>
-
-<script>
-export default {
-  components: {},
-};
-</script>

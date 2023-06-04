@@ -5,7 +5,7 @@
         <div class="column is-4 is-offset-4">
           <h2 class="title has-text-centered">Register!</h2>
 
-          <Notification :message="error" v-if="error"/>
+          <NotificationBanner :message="error" v-if="error"/>
 
           <form method="post" @submit.prevent="register">
             <div class="field">
@@ -15,7 +15,7 @@
                   type="text"
                   class="input"
                   name="username"
-                  v-model="username"
+                  v-model="user_name"
                   required
                 />
               </div>
@@ -64,7 +64,7 @@ export default {
   middleware: 'guest',
   data() {
     return {
-      username: '',
+      user_name: '',
       email: '',
       password: '',
       error: null
@@ -74,22 +74,33 @@ export default {
   methods: {
     async register() {
       try {
-        await this.$axios.post('register', {
-          username: this.username,
-          email: this.email,
-          password: this.password
-        })
-
-        await this.$auth.loginWith('local', {
-          data: {
-          email: this.email,
-          password: this.password
+        var res = await fetch('http://localhost:3001/api/user/signup', {
+          method: 'POST',
+          mode: 'cors',
+          cache: 'no-cache',
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
           },
-        })
+          body: JSON.stringify({
+            user_name: this.user_name,
+            email: this.email,
+            password: this.password
+          }),
+        });
+        console.log(res);
 
-        this.$router.push('/')
+        // await this.$auth.loginWith('local', {
+        //   data: {
+        //   email: this.email,
+        //   password: this.password
+        //   },
+        // })
+
+        // this.$router.push('/')
       } catch (e) {
-        this.error = e.response.data.message
+        console.log(e)
+        this.error = e
       }
     }
   }

@@ -35,18 +35,21 @@
     </div>
   </nav>
 </template>
-
 <script>
-import { mapGetters } from "vuex";
-
 export default {
   computed: {
-    ...mapGetters(["isAuthenticated", "loggedInUser"]),
+    // ...mapGetters(["isAuthenticated", "loggedInUser"])
+  },
+  data(){
+    return {
+      isAuthenticated: false,
+      loggedInUser: false,
+    }
   },
   methods: {
     async logout() {
-      await this.$auth.logout();
-    },
-  },
-};
+      // logout
+    }
+  }
+}
 </script>
