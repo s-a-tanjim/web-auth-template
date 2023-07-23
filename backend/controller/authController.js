@@ -39,7 +39,7 @@ async function loginUser (req, res, next) {
         }
       })
 
-      res.json({
+      return res.json({
         access_token: accessToken,
         refresh_token: refreshToken,
         user

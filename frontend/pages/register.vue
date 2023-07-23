@@ -88,7 +88,9 @@ export default {
             password: this.password
           }),
         });
-        console.log(res);
+        console.log("Signup Successful. Redirecting to login page.")
+        
+        return navigateTo('/login')
 
         // await this.$auth.loginWith('local', {
         //   data: {

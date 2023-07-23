@@ -5,7 +5,7 @@
         <div class="column is-4 is-offset-4">
           <h2 class="title has-text-centered">Welcome back!</h2>
 
-          <Notification :message="error" v-if="error"/>
+          <NotificationBanner :message="error.message" v-if="error.message"/>
 
           <form method="post" @submit.prevent="login">
             <div class="field">
@@ -15,7 +15,7 @@
                   type="email"
                   class="input"
                   name="email"
-                  v-model="email"
+                  v-model="user.email"
                 />
               </div>
             </div>
@@ -26,7 +26,7 @@
                   type="password"
                   class="input"
                   name="password"
-                  v-model="password"
+                  v-model="user.password"
                 />
               </div>
             </div>
@@ -45,32 +45,63 @@
   </section>
 </template>
 
-<script>
-export default {
-  middleware: 'guest',
-  data() {
-    return {
-      email: '',
-      password: '',
-      error: null
-    }
-  },
+<script lang="ts" setup>
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '~/store/auth';
+const { loginWithLocal } = useAuthStore();
+const { authenticated } = storeToRefs(useAuthStore());
 
-  methods: {
-    async login() {
-      try {
-        await this.$auth.loginWith('local', {
-          data: {
-          email: this.email,
-          password: this.password
-          }
-        })
+const user = ref({
+  email: 'test@test.com',
+  password: 'password',
+});
 
-        this.$router.push('/')
-      } catch (e) {
-        this.error = e.response.data.message
-      }
+const error = ref({
+  message: ""
+})
+
+const router = useRouter();
+
+definePageMeta({
+  middleware: 'auth' // this should match the name of the file inside the middleware directory 
+})
+
+const login = async () => {
+  try {
+    await loginWithLocal(user.value);
+  
+    if (authenticated) {
+      router.push('/');
     }
+  } catch (err: any) {
+    error.value.message = err;
   }
-}
+};
+
+// export default {
+//   middleware: 'guest',
+//   data() {
+//     return {
+//       email: '',
+//       password: '',
+//       error: null
+//     }
+//   },
+
+//   methods: {
+//     async login() {
+//       try {
+//         await this.$auth.loginWithLocal({
+//           email: this.email,
+//           password: this.password
+//         })
+
+//         this.$router.push('/')
+//       } catch (e) {
+//         console.log(e)
+//         this.error = e?.response?.data?.message
+//       }
+//     }
+//   }
+// }
 </script>

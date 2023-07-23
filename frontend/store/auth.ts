@@ -1,38 +1,50 @@
 import { defineStore } from 'pinia';
 
 interface UserPayloadInterface {
-  username: string;
+  email: string;
   password: string;
+}
+
+interface UserDataInterface {
+  email: string,
+  user_name: string
 }
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     authenticated: false,
     loading: false,
+    userData: null
   }),
   actions: {
-    async authenticateUser({ username, password }: UserPayloadInterface) {
+    async loginWithLocal({ email, password }: UserPayloadInterface) {
       // useFetch from nuxt 3
-      const { data, pending }: any = await useFetch('https://dummyjson.com/auth/login', {
+      const { data, pending, error }: any = await useFetch('http://localhost:3001/api/auth/login', {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: {
-          username,
+          email,
           password,
         },
       });
       this.loading = pending;
 
       if (data.value) {
-        const token = useCookie('token'); // useCookie new hook in nuxt 3
-        token.value = data?.value?.token; // set token to cookie
-        this.authenticated = true; // set authenticated  state value to true
+        const access_token = useCookie('access_token');
+        access_token.value = data?.value?.access_token;
+        const refresh_token = useCookie('refresh_token');
+        refresh_token.value = data?.value?.refresh_token;
+        
+        this.userData = data?.value?.user;
+        this.authenticated = true;
+      } else {
+        throw error?.value?.data?.message;
       }
     },
     logUserOut() {
-      const token = useCookie('token'); // useCookie new hook in nuxt 3
-      this.authenticated = false; // set authenticated  state value to false
-      token.value = null; // clear the token cookie
+      const token = useCookie('access_token');
+      this.authenticated = false;
+      token.value = null;
     },
   },
 });
