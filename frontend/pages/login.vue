@@ -63,7 +63,7 @@ const error = ref({
 const router = useRouter();
 
 definePageMeta({
-  middleware: 'auth' // this should match the name of the file inside the middleware directory 
+  middleware: 'auth'
 })
 
 const login = async () => {
@@ -74,7 +74,7 @@ const login = async () => {
       router.push('/');
     }
   } catch (err: any) {
-    error.value.message = err;
+    err.value.message = err;
   }
 };
 

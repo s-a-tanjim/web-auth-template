@@ -115,4 +115,35 @@ router.delete(
   authController.revokeAccessToken
 )
 
+
+/**
+ * @swagger
+ * /api/auth/verify:
+ *   post:
+ *     tags: [Authentication]
+ *     summary: Verify Access Token
+ *     description: Verify access token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *              type: object
+ *              properties:
+ *                access_token:
+ *                  type: string
+ *                  description: Access Token.
+ *                  example: random_string
+ *     responses:
+ *       200:
+ *         description: Token verified
+ *
+*/
+router.post(
+  '/verify',
+  body('access_token').exists(),
+  throwValidationErrorMiddleware.throwIfError,
+  authController.verifyAccessToken
+)
+
 module.exports = router

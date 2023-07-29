@@ -58,10 +58,19 @@
   </section>
 </template>
 
-<script>
+<!-- <script lang="ts">
 
+definePageMeta({
+  middleware: 'auth'
+})
+</script> -->
+<script>
+// definePageMeta({
+//   middleware: 'auth',
+//   auth: 'guest'
+// })
 export default {
-  middleware: 'guest',
+  middleware: 'auth',
   data() {
     return {
       user_name: '',

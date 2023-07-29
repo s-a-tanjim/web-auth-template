@@ -1,3 +1,39 @@
+<script lang="ts" setup>
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '~/store/auth';
+const store = useAuthStore();
+const {logUserOut} = useAuthStore()
+
+const { isAuthenticated, userInfo } = storeToRefs(store)
+
+
+// export default {
+//   computed: {
+//     // ...mapGetters(["isAuthenticated", "loggedInUser"])
+//   },
+//   data(){
+//     return {
+//       isAuthenticated: false,
+//       loggedInUser: false,
+//     }
+//   },
+//   methods: {
+//     async logout() {
+//       // logout
+//     }
+//   }
+// }
+
+
+const logout = async () => {
+  try {
+    await logUserOut();
+  } catch (err: any) {
+    err.value.message = err;
+  }
+};
+
+</script>
 <template>
   <nav class="navbar is-light">
     <div class="container">
@@ -16,7 +52,7 @@
             v-if="isAuthenticated"
           >
             <a class="navbar-link">
-              {{ loggedInUser.username }}
+              {{ userInfo?.email }}
             </a>
             <div class="navbar-dropdown">
               <nuxt-link class="navbar-item" to="/profile"
@@ -35,21 +71,3 @@
     </div>
   </nav>
 </template>
-<script>
-export default {
-  computed: {
-    // ...mapGetters(["isAuthenticated", "loggedInUser"])
-  },
-  data(){
-    return {
-      isAuthenticated: false,
-      loggedInUser: false,
-    }
-  },
-  methods: {
-    async logout() {
-      // logout
-    }
-  }
-}
-</script>

@@ -4,7 +4,7 @@
       <h1>Web Auth Template</h1>
     </div>
 
-    <div v-if="userData" class="text-center">
+    <div v-if="isAuthenticated" class="text-center">
       <div>
         <p>Hi there!</p>
         <p>You are logged in as: {{ userData.email }}</p>
@@ -22,11 +22,11 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '~/store/auth';
-const { userData } = storeToRefs(useAuthStore());
+const { userData, isAuthenticated } = storeToRefs(useAuthStore());
 const router = useRouter();
 
 const goToProfile = () => {
-  router.push('/');
+  router.push('/profile');
 }
 </script>
 

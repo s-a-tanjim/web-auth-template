@@ -22,7 +22,7 @@ const swaggerOptions = {
 
 const openapiSpecification = swaggerJsdoc(swaggerOptions)
 
-var allowedOrigins = ['http://localhost:3000'];
+var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 app.use(cors({
   origin: function(origin, callback){
     // allow requests with no origin 

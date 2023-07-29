@@ -78,7 +78,7 @@ async function createNewToken (req, res, next) {
       })
     })
   } catch (err) {
-    next(err)
+    return next(err)
   }
 }
 
@@ -108,6 +108,22 @@ async function revokeAccessToken (req, res, next) {
   }
 }
 
+
+async function verifyAccessToken(req, res, next) {
+  try {
+    const accessToken = req.body.access_token
+
+    return jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET, (err, data) => {
+      if (err || !data) return res.status(403).json({message: "Unauthorized"})
+      return res.json({
+        "message": "success",
+        data: data
+      })
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
 
 // async function signinWithGoogle (req, res, next) {
 //   try {
@@ -147,3 +163,4 @@ async function revokeAccessToken (req, res, next) {
 exports.loginUser = loginUser
 exports.createNewToken = createNewToken
 exports.revokeAccessToken = revokeAccessToken
+exports.verifyAccessToken = verifyAccessToken

@@ -5,17 +5,31 @@ interface UserPayloadInterface {
   password: string;
 }
 
-interface UserDataInterface {
+export interface UserDataInterface {
   email: string,
   user_name: string
 }
+
+declare module 'pinia' {
+  export interface PiniaCustomProperties {
+    userData: UserDataInterface;
+  }
+}
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     authenticated: false,
     loading: false,
-    userData: null
+    userData: {
+      email: "",
+      user_name: ""
+    }
   }),
+  getters: {
+    isAuthenticated: (state):boolean => state.authenticated,
+    userInfo: (state): UserDataInterface => state.userData
+  },
   actions: {
     async loginWithLocal({ email, password }: UserPayloadInterface) {
       // useFetch from nuxt 3
@@ -41,10 +55,36 @@ export const useAuthStore = defineStore('auth', {
         throw error?.value?.data?.message;
       }
     },
+    async getUserInfo() {
+      const access_token = useCookie('access_token')
+      if (access_token.value) {
+        const {data, error}: any = await useFetch('http://localhost:3001/api/user', {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + access_token.value
+          }
+        })
+
+        if(data.value) {
+          this.authenticated = true
+          this.userData = data.value
+        } else {
+          this.authenticated = false
+          console.log(error.value)
+        }
+      } else {
+        this.authenticated = false
+      }
+
+    },
     logUserOut() {
-      const token = useCookie('access_token');
+      useCookie('access_token').value = null
+      useCookie('refresh_token').value = null
       this.authenticated = false;
-      token.value = null;
+      this.userData = {
+        email: "",
+        user_name: ""
+      }
     },
   },
 });
